@@ -7,23 +7,23 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Set up templating, form parsing, and static file support
+// Set up templating, form parsing, and static file support. same nesting as from quiz
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ✅ CRITICAL: Configure sessions BEFORE loading routes
+// session config
 app.use(session({
     secret: process.env.NODE_SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
         mongoUrl: process.env.MONGODB_URI,
-        ttl: 60 * 60 // 1 hour
+        ttl: 60 * 60 // 1 hour, 60s by 60 mins
     })
 }));
 
-// Load routes AFTER session middleware is active
+// loading routes
 const authRoutes = require('./routes/auth');
 const membersRoutes = require('./routes/members');
 app.use('/', authRoutes);
