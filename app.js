@@ -1,29 +1,35 @@
-// Let's get all the requires out of the way
-
 require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const path = require('path');
 
-// Express App that I will deploy on port 3k
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Reaching into the routes folder
-const authRoutes = require('./routes/auth');
-const membersRoutes = require('./routes/members');
-
-// Setting deepest possible nesting, static files, using ejs for my html.
+// Set up templating, form parsing, and static file support
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Routes from the respective folders earlier
+// ✅ CRITICAL: Configure sessions BEFORE loading routes
+app.use(session({
+    secret: process.env.NODE_SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGODB_URI,
+        ttl: 60 * 60 // 1 hour
+    })
+}));
+
+// Load routes AFTER session middleware is active
+const authRoutes = require('./routes/auth');
+const membersRoutes = require('./routes/members');
 app.use('/', authRoutes);
 app.use('/', membersRoutes);
 
-// Returning a 404 if any other url is entered, unrecognized etc
+// 404 fallback
 app.use((req, res) => {
     res.status(404).render('404');
 });

@@ -34,7 +34,7 @@ router.post('/signup', async (req, res) => {
     try {
         await db.collection('users').insertOne(user);
         req.session.user = { name: user.name };
-        res.redirect('/members');
+        res.redirect('/');
     } catch {
         res.send('Error creating user. <a href="/signup">Try again</a>');
     }
@@ -53,7 +53,7 @@ router.post('/login', async (req, res) => {
     const user = await db.collection('users').findOne({ email: req.body.email });
     if (user && await bcrypt.compare(req.body.password, user.password)) {
         req.session.user = { name: user.name };
-        res.redirect('/members');
+        res.redirect('/');
     } else {
         res.send('Invalid login. <a href="/login">Try again</a>');
     }
