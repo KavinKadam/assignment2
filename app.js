@@ -3,7 +3,7 @@ const express = require('express');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const path = require('path');
-
+const adminRoutes = require('./routes/admin');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -28,6 +28,7 @@ const authRoutes = require('./routes/auth');
 const membersRoutes = require('./routes/members');
 app.use('/', authRoutes);
 app.use('/', membersRoutes);
+app.use('/', adminRoutes);
 
 // 404 fallback
 app.use((req, res) => {

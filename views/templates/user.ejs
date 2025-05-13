@@ -1,0 +1,8 @@
+<li>
+    <%= user.name %> – <%= user.email %> (<%= user.user_type %>)
+    <% if (user.user_type === 'user') { %>
+        <a class="btn btn-sm btn-success" href="/promote/<%= user._id %>">Promote</a>
+    <% } else { %>
+        <a class="btn btn-sm btn-danger" href="/demote/<%= user._id %>">Demote</a>
+    <% } %>
+</li>
